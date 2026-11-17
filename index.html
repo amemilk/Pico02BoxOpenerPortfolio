@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pico03 Automatic Lid Opener</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --code-bg: #f8fafc;
+      --text: #111827;
+      --muted: #4b5563;
+      --border: #e5e7eb;
+      --accent: #1f2937;
+      --tag-bg: #f3f4f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.75rem;
+      margin-bottom: 2.25rem;
+    }
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 65ch;
+      margin-bottom: 1rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      background: var(--tag-bg);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    section {
+      margin-bottom: 2.75rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Demo Video Container */
+    .video-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .video-frame {
+      width: 100%;
+      max-width: 340px;
+      aspect-ratio: 9 / 16;
+      border: none;
+      border-radius: 6px;
+      background: #000;
+      display: block;
+    }
+
+    .media-note {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    /* Hardware & Logic Breakdown */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .spec-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+    }
+
+    .spec-item strong {
+      display: block;
+      font-size: 0.925rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .spec-item span {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    /* Photo Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    figure {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: zoom-in;
+      transition: border-color 0.15s ease;
+    }
+
+    figure:hover {
+      border-color: #9ca3af;
+    }
+
+    figure img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      background: #f3f4f6;
+    }
+
+    figcaption {
+      padding: 0.75rem 0.9rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.45;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Code Block */
+    .code-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 1rem;
+      background: var(--tag-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-filename {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.825rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .copy-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    pre {
+      background: var(--code-bg);
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      max-height: 520px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: var(--text);
+      tab-size: 4;
+    }
+
+    /* Lightbox Modal */
+    dialog {
+      border: none;
+      border-radius: 8px;
+      padding: 0;
+      max-width: 90vw;
+      max-height: 90vh;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      margin: auto;
+    }
+
+    dialog::backdrop {
+      background: rgba(17, 24, 39, 0.75);
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-body img {
+      max-width: 88vw;
+      max-height: 76vh;
+      object-fit: contain;
+      background: #111827;
+      display: block;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .close-btn {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Pico03 Automatic Lid Opener</h1>
+      <p class="subtitle">
+        A contactless container lid opener driven by a Raspberry Pi Pico, an infrared obstacle sensor, an adjustable rotary potentiometer, and an SG90 micro servo.
+      </p>
+      <div class="tags">
+        <span class="tag">Raspberry Pi Pico</span>
+        <span class="tag">MicroPython</span>
+        <span class="tag">SG90 Micro Servo</span>
+        <span class="tag">IR Obstacle Sensor</span>
+        <span class="tag">Analog Potentiometer</span>
+      </div>
+    </header>
+
+    <section aria-labelledby="demo-heading">
+      <h2 id="demo-heading">Demonstration</h2>
+      <div class="video-card">
+        <iframe
+          class="video-frame"
+          src="https://www.youtube.com/embed/WILKcnGLryA"
+          title="Pico03 Automatic Lid Opener Demonstration"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+        <p class="media-note">
+          Triggering the IR sensor lifts the lid to the angle set by the potentiometer, holds for 3 seconds, and returns to rest.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="overview-heading">
+      <h2 id="overview-heading">System Overview</h2>
+      <p>
+        The Pico03 Automatic Lid Opener automates opening a hinged clamshell container without physical contact. Placing a hand in front of the infrared obstacle avoidance module pulls GP14 low, signaling the Raspberry Pi Pico to rotate the SG90 servo arm against the lid seam.
+      </p>
+      <p>
+        A rotary potentiometer connected to ADC pin GP26 scales a 16-bit analog reading across 0&deg;&ndash;180&deg; so the maximum opening angle can be adjusted on the fly. Once the sensor clears, the 0.1-second polling loop counts 3 seconds of unobstructed time before returning the servo to its 65&deg; closed resting angle.
+      </p>
+
+      <div class="specs-grid">
+        <div class="spec-item">
+          <strong>Microcontroller</strong>
+          <span>Raspberry Pi Pico running MicroPython on a solderless breadboard, polling inputs at 10 Hz.</span>
+        </div>
+        <div class="spec-item">
+          <strong>Proximity Trigger (GP14)</strong>
+          <span>Active-low IR obstacle avoidance module outputting 0 on hand detection and 1 when clear.</span>
+        </div>
+        <div class="spec-item">
+          <strong>Angle Adjustment (GP26)</strong>
+          <span>Rotary potentiometer read via 16-bit ADC (0&ndash;65535) to map target servo angles from 0&deg; to 180&deg;.</span>
+        </div>
+        <div class="spec-item">
+          <strong>Actuation &amp; Timing (GP16)</strong>
+          <span>50 Hz PWM-driven SG90 micro servo holding at the target angle until 3 seconds after the sensor clears, then returning to 65&deg;.</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="gallery-heading">
+      <h2 id="gallery-heading">Build &amp; Hardware Gallery</h2>
+      <div class="gallery">
+        <figure data-full="Pico02BoxOpenerSetup.jpg">
+          <img src="Pico02BoxOpenerSetup.jpg" alt="Complete desk setup of the Pico lid opener prototype" loading="lazy" />
+          <figcaption>Complete desk layout showing the breadboard circuit, IR sensor, potentiometer, and servo.</figcaption>
+        </figure>
+
+        <figure data-full="Pico02BoxOpenerBreadboard.jpg">
+          <img src="Pico02BoxOpenerBreadboard.jpg" alt="Raspberry Pi Pico and potentiometer wired on a breadboard" loading="lazy" />
+          <figcaption>Breadboard wiring connecting the Raspberry Pi Pico and rotary potentiometer.</figcaption>
+        </figure>
+
+        <figure data-full="Pico02BoxOpenerObstacleModule.jpg">
+          <img src="Pico02BoxOpenerObstacleModule.jpg" alt="Hand holding the infrared obstacle avoidance module" loading="lazy" />
+          <figcaption>IR obstacle avoidance module used to detect hand proximity and trigger the opener.</figcaption>
+        </figure>
+
+        <figure data-full="Pico02BoxOpenerServo.jpg">
+          <img src="Pico02BoxOpenerServo.jpg" alt="Close-up of the SG90 micro servo and jumper wires" loading="lazy" />
+          <figcaption>SG90 micro servo motor and jumper wire connections to the breadboard.</figcaption>
+        </figure>
+
+        <figure data-full="Pico02ServoOpen.jpg">
+          <img src="Pico02ServoOpen.jpg" alt="Servo arm rotated to prop open the clamshell container lid" loading="lazy" />
+          <figcaption>Servo arm rotated to the open position, lifting the clamshell container lid.</figcaption>
+        </figure>
+
+        <figure data-full="Pico02ServoClosed.jpg">
+          <img src="Pico02ServoClosed.jpg" alt="Servo arm returned to resting position with the lid closed" loading="lazy" />
+          <figcaption>Servo arm returned to its 65&deg; resting position after the 3-second hold, letting the lid close.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section aria-labelledby="code-heading">
+      <h2 id="code-heading">Source Code</h2>
+      <div class="code-card">
+        <div class="code-header">
+          <span class="code-filename">Pico02BoxOpenerCode.py</span>
+          <button class="copy-btn" id="copy-code-btn" type="button">Copy</button>
+        </div>
+        <pre><code id="source-code">from machine import Pin, ADC, PWM
+import time
+
+ObstacleAvoidPin = 14
+ObstacleAvoid = Pin(ObstacleAvoidPin, Pin.IN)
+
+PotentiometerPin = 26
+Potentiometer = ADC(Pin(PotentiometerPin))
+
+SERVO_PIN = 16
+servo = PWM(Pin(SERVO_PIN))
+servo.freq(50)
+
+def set_servo_angle(angle):
+    angle = max(0, min(180, angle))
+    
+    duty = int(1638 + angle * (8192 - 1638) / 180)
+    servo.duty_u16(duty)
+
+closeAngle = 65
+set_servo_angle(closeAngle)
+
+scaleFactor = 180/65535
+handAwayDuration = 0
+while True:
+    PotentiometerValue = Potentiometer.read_u16() # Returns 0 to 65535
+    print(str(PotentiometerValue))
+    print(str(PotentiometerValue * scaleFactor))
+    
+    ObstacleAvoidValue = ObstacleAvoid.value() #1 if clear, 0 if obstacle
+    
+    if ObstacleAvoidValue == 0:
+        print("Obstacle")
+        handAwayDuration = 0
+        set_servo_angle(PotentiometerValue * scaleFactor)
+    else:
+        print("No obstacle")
+        handAwayDuration += 0.1
+    
+    if handAwayDuration &gt; 3: #after 3 seconds of being away from the sensor, the servo 
+        set_servo_angle(closeAngle)
+    
+    time.sleep(0.1)</code></pre>
+      </div>
+    </section>
+
+    <footer>
+      Pico03 Automatic Lid Opener &mdash; Hardware Prototype Portfolio
+    </footer>
+  </main>
+
+  <dialog id="lightbox">
+    <div class="modal-body">
+      <img id="lightbox-img" src="" alt="" />
+      <div class="modal-footer">
+        <span id="lightbox-caption"></span>
+        <button class="close-btn" id="close-lightbox" type="button">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // Lightbox modal for gallery images
+    const dialog = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const closeBtn = document.getElementById("close-lightbox");
+
+    document.querySelectorAll("figure").forEach((card) => {
+      card.addEventListener("click", () => {
+        const img = card.querySelector("img");
+        const caption = card.querySelector("figcaption");
+        lightboxImg.src = card.dataset.full || img.src;
+        lightboxImg.alt = img.alt;
+        lightboxCaption.textContent = caption.textContent;
+        dialog.showModal();
+      });
+    });
+
+    closeBtn.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Copy code button
+    const copyCodeBtn = document.getElementById("copy-code-btn");
+    const sourceCode = document.getElementById("source-code");
+
+    copyCodeBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(sourceCode.textContent);
+        copyCodeBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyCodeBtn.textContent = "Copy";
+        }, 2000);
+      } catch (err) {
+        copyCodeBtn.textContent = "Failed";
+      }
+    });
+  </script>
+</body>
+</html>
