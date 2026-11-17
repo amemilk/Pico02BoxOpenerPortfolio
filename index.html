@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pico03 Automatic Lid Opener</title>
+  <title>Pico02 Automatic Lid Opener</title>
   <style>
     :root {
       --bg: #fafafa;
@@ -295,7 +295,7 @@
 <body>
   <main>
     <header>
-      <h1>Pico03 Automatic Lid Opener</h1>
+      <h1>Pico02 Automatic Lid Opener</h1>
       <p class="subtitle">
         A contactless container lid opener driven by a Raspberry Pi Pico, an infrared obstacle sensor, an adjustable rotary potentiometer, and an SG90 micro servo.
       </p>
@@ -327,7 +327,7 @@
     <section aria-labelledby="overview-heading">
       <h2 id="overview-heading">System Overview</h2>
       <p>
-        The Pico03 Automatic Lid Opener automates opening a hinged clamshell container without physical contact. Placing a hand in front of the infrared obstacle avoidance module pulls GP14 low, signaling the Raspberry Pi Pico to rotate the SG90 servo arm against the lid seam.
+        The Pico02 Automatic Lid Opener automates opening a hinged clamshell container without physical contact. Placing a hand in front of the infrared obstacle avoidance module signals the Raspberry Pi Pico to rotate the SG90 servo arm against the lid seam.
       </p>
       <p>
         A rotary potentiometer connected to ADC pin GP26 scales a 16-bit analog reading across 0&deg;&ndash;180&deg; so the maximum opening angle can be adjusted on the fly. Once the sensor clears, the 0.1-second polling loop counts 3 seconds of unobstructed time before returning the servo to its 65&deg; closed resting angle.
@@ -336,11 +336,11 @@
       <div class="specs-grid">
         <div class="spec-item">
           <strong>Microcontroller</strong>
-          <span>Raspberry Pi Pico running MicroPython on a solderless breadboard, polling inputs at 10 Hz.</span>
+          <span>Raspberry Pi Pico running MicroPython on a solderless breadboard.</span>
         </div>
         <div class="spec-item">
           <strong>Proximity Trigger (GP14)</strong>
-          <span>Active-low IR obstacle avoidance module outputting 0 on hand detection and 1 when clear.</span>
+          <span>IR obstacle avoidance module outputting 0 on hand detection and 1 when clear.</span>
         </div>
         <div class="spec-item">
           <strong>Angle Adjustment (GP26)</strong>
@@ -442,7 +442,7 @@ while True:
     </section>
 
     <footer>
-      Pico03 Automatic Lid Opener &mdash; Hardware Prototype Portfolio
+      Pico02 Automatic Lid Opener &mdash; Hardware Prototype Portfolio
     </footer>
   </main>
 
